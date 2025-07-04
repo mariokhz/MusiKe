@@ -2,7 +2,13 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.MusiKe" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Only use colors declared in colors.xml -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorError">@color/error</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:colorControlActivated">@color/primary</item>
     </style>
 
     <style name="Theme.MusiKe" parent="Base.Theme.MusiKe" />
