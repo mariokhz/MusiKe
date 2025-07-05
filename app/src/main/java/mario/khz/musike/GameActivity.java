@@ -2,9 +2,12 @@ package mario.khz.musike;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.graphics.Color;
+import android.content.res.ColorStateList;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,9 +28,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import com.google.android.material.button.MaterialButton;
+
 public class GameActivity extends AppCompatActivity {
 
     private MediaPlayer mediaPlayer;
+    private CircleProgressView circleProgress;
+    private Handler progressHandler = new Handler();
     private String correctInstrument;
     private String[] instrumentos;
 
@@ -36,6 +43,9 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
+
+        // Inicializar CircleProgressView
+        circleProgress = findViewById(R.id.circleProgress);
 
         // Ajustar insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -53,10 +63,26 @@ public class GameActivity extends AppCompatActivity {
             if (mediaPlayer != null) {
                 mediaPlayer.setLooping(false);
                 mediaPlayer.start();
+                // Iniciar actualización de progreso
+                startProgressUpdater();
                 // Mostrar opciones de respuesta
                 setupOptions();
             }
         }
+    }
+
+    private void startProgressUpdater() {
+        final int duration = mediaPlayer.getDuration();
+        progressHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    int pos = mediaPlayer.getCurrentPosition();
+                    circleProgress.setProgress((float) pos / duration);
+                    progressHandler.postDelayed(this, 50);
+                }
+            }
+        });
     }
 
     private void setupOptions() {
@@ -72,26 +98,41 @@ public class GameActivity extends AppCompatActivity {
             options.add(wrong.get(i));
         }
         Collections.shuffle(options);
-        // Asignar a botones
+        // Asignar a botones con clave en tag y texto amigable
         Button b1 = findViewById(R.id.option1);
         Button b2 = findViewById(R.id.option2);
         Button b3 = findViewById(R.id.option3);
         Button b4 = findViewById(R.id.option4);
-        b1.setText(options.get(0));
-        b2.setText(options.get(1));
-        b3.setText(options.get(2));
-        b4.setText(options.get(3));
+        b1.setTag(options.get(0)); b1.setText(getDisplayName(options.get(0)));
+        b2.setTag(options.get(1)); b2.setText(getDisplayName(options.get(1)));
+        b3.setTag(options.get(2)); b3.setText(getDisplayName(options.get(2)));
+        b4.setTag(options.get(3)); b4.setText(getDisplayName(options.get(3)));
     }
 
     public void onOptionSelected(View view) {
-        String selected = ((Button) view).getText().toString();
-        if (selected.equals(correctInstrument)) {
+        String key = (String) view.getTag();
+        MaterialButton btn = (MaterialButton) view;
+        if (key.equals(correctInstrument)) {
+            btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
             Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show();
         } else {
+            btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
             Toast.makeText(this, "Incorrecto", Toast.LENGTH_SHORT).show();
         }
         // Opcional: detener audio o pasar a siguiente ronda
         if (mediaPlayer != null && mediaPlayer.isPlaying()) mediaPlayer.stop();
+        // Detener actualización de progreso
+        progressHandler.removeCallbacksAndMessages(null);
+    }
+
+    private String getDisplayName(String key) {
+        switch (key) {
+            case "violin": return "Violín";
+            // añadir más mapeos según sea necesario
+            default:
+                // Capitalizar primera letra
+                return key.substring(0,1).toUpperCase() + key.substring(1);
+        }
     }
 
     private String[] cargarInstrumentosDesdeAssets() {
@@ -130,5 +171,7 @@ public class GameActivity extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        // Limpiar Handler
+        progressHandler.removeCallbacksAndMessages(null);
     }
 }
