@@ -8,6 +8,7 @@
     {"name": "oboe", "file": "oboe"},
     {"name": "violin", "file": "violin"},
     {"name": "viola", "file": "viola"},
-    {"name": "piano", "file": "piano"}
+    {"name": "piano", "file": "piano"},
+    {"name": "arpa", "file": "arpa"}
   ]
 }
