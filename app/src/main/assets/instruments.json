@@ -1,0 +1,13 @@
+{
+  "instruments": [
+    {"name": "flauta", "file": "flauta"},
+    {"name": "fagot", "file": "fagot"},
+    {"name": "clarinete", "file": "clarinete"},
+    {"name": "contrabajo", "file": "contrabajo"},
+    {"name": "cello", "file": "cello"},
+    {"name": "oboe", "file": "oboe"},
+    {"name": "violin", "file": "violin"},
+    {"name": "viola", "file": "viola"},
+    {"name": "piano", "file": "piano"}
+  ]
+}

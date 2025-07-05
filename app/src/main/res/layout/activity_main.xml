@@ -23,6 +23,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button1"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -31,6 +32,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button2"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -39,6 +41,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button3"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -47,6 +50,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button4"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -55,6 +59,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button5"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -63,6 +68,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button6"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -71,6 +77,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button7"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -79,6 +86,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button8"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
@@ -87,6 +95,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button9"
+            android:onClick="startGame"
             android:layout_width="90dp"
             android:layout_height="90dp"
             app:backgroundTint="@null"
