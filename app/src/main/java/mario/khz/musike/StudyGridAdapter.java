@@ -1,6 +1,7 @@
 package mario.khz.musike;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.view.Gravity;
 import android.view.View;
@@ -61,6 +62,7 @@ public class StudyGridAdapter {
             label.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             label.setText(displayNameMap.get(file));
             label.setGravity(Gravity.CENTER);
+            label.setTextColor(Color.WHITE);
 
             cell.addView(btn);
             cell.addView(label);

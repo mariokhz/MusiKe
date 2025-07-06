@@ -31,6 +31,15 @@ public class StudyActivity extends AppCompatActivity {
 
         instrumentos = cargarInstrumentosDesdeAssets();
 
+        // Orden de instrumentos
+        instrumentos = new String[]{
+            "violin", "viola", "cello", "contrabajo",
+            "piano", "arpa", "marimba", "vibrafono",
+            "flauta", "oboe", "clarinete", "fagot",
+            "trompeta", "trompa", "trombon", "tuba",
+            "caja", "campanologo", "pequena_percusion", "platos_de_choque"
+        };
+
         GridLayout grid = findViewById(R.id.studyGrid);
         adapter = new StudyGridAdapter(this, instrumentos, displayNameMap);
         adapter.populate(grid);
