@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".RoundSelectionActivity"
+            android:exported="true" />
+        <activity
             android:name=".GameActivity"
             android:exported="false" />
         <activity

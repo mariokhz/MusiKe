@@ -9,6 +9,8 @@ import android.widget.Toast;
 import android.graphics.Color;
 import android.content.res.ColorStateList;
 import android.content.Intent;
+import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +38,8 @@ import com.google.android.material.button.MaterialButton;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final int MAX_ROUNDS = 10;
+    public static final String EXTRA_MAX_ROUNDS = "maxRounds";
+    private int totalRounds;
     private MediaPlayer mediaPlayer;
     private CircleProgressView circleProgress;
     private Handler progressHandler = new Handler();
@@ -49,15 +52,22 @@ public class GameActivity extends AppCompatActivity {
     private Map<String, String> displayNameMap;
     private List<String> userAnswers = new ArrayList<>();
     private List<String> correctAnswers = new ArrayList<>();
+    private TextView roundNumberText;
+    private ImageView instrumentIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
+        // Obtener número de rondas de selección o usar 10 por defecto
+        totalRounds = getIntent().getIntExtra(EXTRA_MAX_ROUNDS, 10);
 
         // Inicializar CircleProgressView
         circleProgress = findViewById(R.id.circleProgress);
+        // Inicializar TextView de número de ronda
+        roundNumberText = findViewById(R.id.roundNumberText);
+        instrumentIcon = findViewById(R.id.instrumentIcon);
         // Guardar tint original de botones
         defaultBtnTint = ((MaterialButton) findViewById(R.id.option1)).getBackgroundTintList();
 
@@ -81,18 +91,18 @@ public class GameActivity extends AppCompatActivity {
     private void generarOrdenRondas() {
         List<String> list = new ArrayList<>(Arrays.asList(instrumentos));
         Collections.shuffle(list, new Random(System.currentTimeMillis()));
-        roundInstruments = new String[MAX_ROUNDS];
-        for (int i = 0; i < MAX_ROUNDS && i < list.size(); i++) {
+        roundInstruments = new String[totalRounds];
+        for (int i = 0; i < totalRounds && i < list.size(); i++) {
             roundInstruments[i] = list.get(i);
         }
     }
 
     private void startRound() {
-        if (roundCount >= MAX_ROUNDS) {
+        if (roundCount >= totalRounds) {
             // Terminar juego: pasar listas de respuestas
             Intent intent = new Intent(this, FinishActivity.class);
             intent.putExtra("correctCount", correctCount);
-            intent.putExtra("totalRounds", MAX_ROUNDS);
+            intent.putExtra("totalRounds", totalRounds);
             intent.putStringArrayListExtra("correctAnswers", new ArrayList<>(correctAnswers));
             intent.putStringArrayListExtra("userAnswers", new ArrayList<>(userAnswers));
             startActivity(intent);
@@ -102,6 +112,11 @@ public class GameActivity extends AppCompatActivity {
         roundCount++;
         // Preparar instrumento y audio de la lista pre-generada
         correctInstrument = roundInstruments[roundCount - 1];
+        // Actualizar número de ronda en UI
+        roundNumberText.setText(String.valueOf(roundCount));
+        // Actualizar icono de instrumento en círculo
+        int iconRes = getResources().getIdentifier(correctInstrument, "drawable", getPackageName());
+        instrumentIcon.setImageResource(iconRes);
         // Guardar instrumento correcto para tabla
         correctAnswers.add(displayNameMap.get(correctInstrument));
         int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
