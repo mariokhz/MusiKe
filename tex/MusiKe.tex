@@ -73,7 +73,6 @@ MusiKe es un juego educativo e interactivo diseñado para que usuarios de todas 
   \item \icon{file} \textbf{tex/MusiKe.tex}: este documento de documentación.
 \end{itemize}
 
-\newpage
 
 \section{Assets}
 
@@ -103,7 +102,6 @@ A continuación se listan los instrumentos incluidos en la aplicación, junto a 
   \item \instrumento{campanologo} Campanólogo: \texttt{res/drawable/campanologo.xml}, \texttt{res/raw/campanologo.mp3}
   \item \instrumento{caja} Caja: \texttt{res/drawable/caja.xml}, \texttt{res/raw/caja.mp3}
 \end{itemize}
-\newpage
 \subsection{Iconos de Instrumentos}
 
 Los iconos de los instrumentos han sido obtenidos de \texttt{https://www.freepik.com/} y procesados posteriormente con el siguiente código:
@@ -113,6 +111,18 @@ Los iconos de los instrumentos han sido obtenidos de \texttt{https://www.freepik
 \includegraphics[width=\textwidth]{svg_codigo.png}
 \caption{Código de procesamiento de SVG.}
 \end{figure}
+
+\subsection{Audios de Instrumentos}
+
+Los audios han sido obtenidos de un CD que me ha prestado un profesor de Música para la realización de este proyecto.
+
+\subsection{Otros Recursos Gráficos \icon{photo-scan}}
+Además de los iconos de los instrumentos, la aplicación utiliza otros recursos gráficos para construir una interfaz de usuario coherente y atractiva:
+\begin{itemize}
+    \item \textbf{Fondos con degradado}: Las pantallas principales de la aplicación utilizan fondos con un suave degradado diagonal. Estos se definen en \texttt{res/drawable/} como ficheros XML de tipo \texttt{<shape>}, lo que permite una representación eficiente y escalable sin necesidad de imágenes de mapa de bits.
+    \item \textbf{Botones redondeados}: Todos los botones interactivos presentan esquinas redondeadas para una estética moderna y amigable. Al igual que los fondos, se definen mediante XML de tipo \texttt{<shape>}, especificando el radio de las esquinas (\texttt{<corners>}) y el color de fondo.
+    \item \textbf{Iconos de la interfaz}: Para mejorar la navegación y la comprensión visual, se utilizan iconos vectoriales en varios puntos de la aplicación (ej: en los botones del menú principal). Estos iconos provienen de la librería de código abierto \textit{Tabler Icons} (también en este documento) y están integrados como \texttt{VectorDrawable} en formato XML, garantizando una visualización nítida en cualquier densidad de pantalla.
+\end{itemize}
 
 
 \section{Activities}
@@ -127,7 +137,14 @@ Es la actividad principal y el punto de entrada de la aplicación. Su función e
 \end{itemize}
 
 \subsection{StudyActivity \icon{book}}
-Esta actividad está diseñada para el aprendizaje y la consulta. Proporciona una interfaz donde el usuario puede explorar todos los instrumentos de la orquesta. Al seleccionar un instrumento, la actividad reproduce su sonido característico, permitiendo una familiarización auditiva y visual sin la presión de un entorno de juego.
+Esta actividad está diseñada para el aprendizaje y la consulta. Proporciona una interfaz donde el usuario puede explorar los instrumentos de la orquesta. Al seleccionar un instrumento, la actividad reproduce su sonido característico, permitiendo una familiarización auditiva y visual sin la presión de un entorno de juego.
+
+Para la presentación visual de los instrumentos, esta actividad utiliza un componente auxiliar llamado \texttt{StudyGridAdapter}, que se encarga de:
+\begin{itemize}
+    \item \textbf{Estructurar la cuadrícula}: Organiza los instrumentos en una rejilla de 4 columnas mediante un \texttt{GridLayout}.
+    \item \textbf{Crear celdas interactivas}: Genera para cada instrumento un contenedor con un botón de imagen que muestra el icono vectorial del instrumento y una etiqueta con su nombre.
+    \item \textbf{Gestionar la reproducción}: Implementa los listeners que reproducen el sonido correspondiente cuando el usuario pulsa sobre un instrumento.
+\end{itemize}
 
 \subsection{RoundSelectionActivity \icon{list}}
 Actúa como una antesala al modo de juego. Su único propósito es permitir al usuario configurar la partida, seleccionando el número de rondas que desea jugar. Una vez que el usuario ha hecho su elección, esta actividad inicia la \texttt{GameActivity}, pasándole la configuración seleccionada como un \textit{extra} en el \texttt{Intent}.
@@ -137,7 +154,7 @@ Es el núcleo interactivo de MusiKe. Esta actividad gestiona la lógica del jueg
 \begin{itemize}
     \item \textbf{Inicio y carga}: Al comenzar, lee el fichero \texttt{assets/instruments.json} para cargar la información de los instrumentos. A continuación, baraja la lista para crear un orden aleatorio de preguntas para la partida.
     \item \textbf{Desarrollo de la ronda}: En cada ronda, reproduce el sonido de un instrumento y presenta al usuario cuatro botones con nombres de instrumentos como posibles respuestas. Para aumentar el desafío, las opciones incorrectas se eligen preferentemente de la misma familia que la respuesta correcta.
-    \item \textbf{Interacción y feedback}: El usuario selecciona una opción. La aplicación le proporciona feedback visual inmediato (verde para acierto, rojo para error) y sonoro. Si falla, se le indica cuál era la respuesta correcta. Tras una breve pausa, la actividad avanza automáticamente a la siguiente ronda.
+    \item \textbf{Interacción y feedback}: El usuario selecciona una opción. La aplicación le proporciona feedback visual inmediato (verde para acierto, rojo para error). Si falla, se le indica cuál era la respuesta correcta. Tras una breve pausa, la actividad avanza automáticamente a la siguiente ronda.
     \item \textbf{Finalización}: Una vez completadas todas las rondas, \texttt{GameActivity} recopila las estadísticas de la partida (número de aciertos, respuestas del usuario y respuestas correctas) y lanza la \texttt{FinishActivity} para mostrar los resultados.
 \end{itemize}
 
@@ -146,5 +163,41 @@ Esta es la pantalla final del ciclo de juego. Su objetivo es mostrar al usuario 
 
 \subsection{CircleProgressView \icon{chart-pie}}
 Aunque no es una Activity, es un componente de interfaz de usuario (View) personalizado de vital importancia en \texttt{GameActivity}. Su función es mostrar una barra de progreso circular que se actualiza en tiempo real, sincronizada con la reproducción del audio del instrumento. Esto proporciona al usuario una referencia visual clara de la duración del sonido y del tiempo restante para responder, mejorando significativamente la experiencia de juego.
+
+\section{Aspectos Técnicos}
+
+En esta sección se abordan decisiones de implementación y detalles técnicos clave que definen la robustez y escalabilidad de la aplicación.
+
+\subsection{Vinculación de Recursos y Datos}
+Se ha adoptado una estrategia de nomenclatura unificada para los recursos. Cada instrumento definido en \texttt{assets/instruments.json} tiene un campo \texttt{file} (ej: \texttt{"violin"}) que actúa como identificador único. Este identificador se corresponde directamente con el nombre de los ficheros de recursos asociados:
+\begin{itemize}
+    \item \textbf{Recurso gráfico}: \texttt{res/drawable/violin.xml}
+    \item \textbf{Recurso de audio}: \texttt{res/raw/violin.mp3}
+\end{itemize}
+Esta convención permite cargar dinámicamente los recursos en el código Java mediante \\
+\texttt{getResources().getIdentifier()}, simplificando enormemente la gestión y la adición de nuevos instrumentos, ya que no es necesario modificar el código para vincular los nuevos assets.
+
+\subsection{Evolución de la Lógica del Juego}
+La mecánica de selección de preguntas en \texttt{GameActivity} ha pasado por una mejora significativa:
+\begin{itemize}
+    \item \textbf{Implementación inicial}: En una primera fase, en cada ronda se seleccionaba un instrumento de forma completamente aleatoria de la lista total. Este enfoque, aunque sencillo, permitía que un mismo instrumento pudiera aparecer varias veces en una misma partida, resultando en una experiencia de juego repetitiva.
+    \item \textbf{Implementación final}: Para solucionar esto, se implementó el método \texttt{generarOrdenRondas()}. Al inicio de cada partida, este método crea una lista con todos los instrumentos, la baraja de forma aleatoria y la almacena. Las rondas posteriores consumen instrumentos de esta lista pre-barajada, garantizando que cada instrumento aparezca como máximo una vez por partida, lo que resulta en una experiencia más variada.
+\end{itemize}
+
+\subsection{Gestión de la Interfaz y el Estado}
+La aplicación gestiona el estado y la interfaz de usuario de manera eficiente:
+\begin{itemize}
+    \item \textbf{Paso de datos}: La comunicación entre Activities se realiza a través de \texttt{Intent extras}, un mecanismo estándar en Android para pasar datos como el número de rondas o los resultados finales.
+    \item \textbf{Actualización en tiempo real}: El progreso de la reproducción de audio se visualiza en el \texttt{CircleProgressView} gracias a un \texttt{Handler} que actualiza la interfaz en segundo plano a intervalos regulares, proporcionando una respuesta visual fluida y sin bloquear el hilo principal.
+    \item \textbf{Liberación de recursos}: En el método \texttt{onDestroy()} de la actividad, se liberan explícitamente los recursos del \texttt{MediaPlayer} y se detienen las actualizaciones del \texttt{Handler}. Esta práctica es fundamental para evitar fugas de memoria (\textit{memory leaks}) y asegurar el buen rendimiento de la aplicación.
+\end{itemize}
+
+\subsection{Gestión de la Orientación de Pantalla}
+Se ha tomado una decisión estratégica respecto a la rotación de pantalla para optimizar la experiencia de usuario y la eficiencia del desarrollo:
+\begin{itemize}
+    \item \textbf{Bloqueo general a modo retrato}: La mayoría de las actividades de la aplicación, incluyendo \texttt{GameActivity}, están configuradas para funcionar exclusivamente en orientación vertical (retrato).
+    \item \textbf{Excepción de StudyActivity}: La única excepción es la \texttt{StudyActivity}, que permite la rotación. Su diseño, basado en un \textit{ScrollView}, se adapta de forma natural a la orientación apaisada sin perjudicar la usabilidad.
+    \item \textbf{Prevención de reinicio en GameActivity}: La razón principal para bloquear la rotación en la \texttt{GameActivity} es evitar el reinicio del ciclo de vida de la actividad que ocurre por defecto en Android al girar el dispositivo. Dicho reinicio provocaría la pérdida completa del estado de la partida (rondas, puntuación, etc.). Implementar la lógica para guardar y restaurar este estado (mediante \texttt{onSaveInstanceState}) habría añadido una complejidad considerable al desarrollo. Por tanto, forzar la orientación vertical se consideró una solución más pragmática y robusta para garantizar la continuidad del juego.
+\end{itemize}
 
 \end{document}

@@ -27,6 +27,8 @@
         android:text="Jugar de nuevo"
         app:layout_constraintTop_toBottomOf="@id/answersTable"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/button_selector"
+        android:backgroundTint="@null"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="32dp" />
 
