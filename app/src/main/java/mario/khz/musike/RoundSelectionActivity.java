@@ -15,13 +15,9 @@ public class RoundSelectionActivity extends AppCompatActivity {
 
         MaterialButton b5 = findViewById(R.id.button5);
         MaterialButton b10 = findViewById(R.id.button10);
-        MaterialButton b15 = findViewById(R.id.button15);
-        MaterialButton b20 = findViewById(R.id.button20);
 
         b5.setOnClickListener(v -> launchGame(5));
         b10.setOnClickListener(v -> launchGame(10));
-        b15.setOnClickListener(v -> launchGame(15));
-        b20.setOnClickListener(v -> launchGame(20));
     }
 
     private void launchGame(int rounds) {

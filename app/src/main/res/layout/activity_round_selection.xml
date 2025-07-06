@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center">
@@ -11,13 +13,14 @@
         android:layout_height="wrap_content"
         android:text="Selecciona número de rondas"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white"
         android:layout_marginBottom="24dp" />
 
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:rowCount="2"
+        android:rowCount="1"
         android:alignmentMode="alignMargins"
         android:columnOrderPreserved="false"
         android:useDefaultMargins="true"
@@ -31,6 +34,7 @@
             android:layout_rowWeight="1"
             android:layout_margin="8dp"
             android:background="@drawable/button_selector"
+            app:backgroundTint="@null"
             android:text="5" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button10"
@@ -41,27 +45,8 @@
             android:layout_rowWeight="1"
             android:layout_margin="8dp"
             android:background="@drawable/button_selector"
+            app:backgroundTint="@null"
             android:text="10" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button15"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="8dp"
-            android:background="@drawable/button_selector"
-            android:text="15" />
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button20"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="8dp"
-            android:background="@drawable/button_selector"
-            android:text="20" />
     </GridLayout>
 
 </LinearLayout>
