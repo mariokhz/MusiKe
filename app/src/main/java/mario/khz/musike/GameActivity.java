@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 
 import com.google.android.material.button.MaterialButton;
@@ -42,6 +44,7 @@ public class GameActivity extends AppCompatActivity {
     private int roundCount = 0;
     private int correctCount = 0;
     private ColorStateList defaultBtnTint;
+    private Map<String, String> displayNameMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +136,10 @@ public class GameActivity extends AppCompatActivity {
         Button b2 = findViewById(R.id.option2);
         Button b3 = findViewById(R.id.option3);
         Button b4 = findViewById(R.id.option4);
-        b1.setTag(options.get(0)); b1.setText(getDisplayName(options.get(0))); b1.setClickable(true);
-        b2.setTag(options.get(1)); b2.setText(getDisplayName(options.get(1))); b2.setClickable(true);
-        b3.setTag(options.get(2)); b3.setText(getDisplayName(options.get(2))); b3.setClickable(true);
-        b4.setTag(options.get(3)); b4.setText(getDisplayName(options.get(3))); b4.setClickable(true);
+        b1.setTag(options.get(0)); b1.setText(displayNameMap.get(options.get(0))); b1.setClickable(true);
+        b2.setTag(options.get(1)); b2.setText(displayNameMap.get(options.get(1))); b2.setClickable(true);
+        b3.setTag(options.get(2)); b3.setText(displayNameMap.get(options.get(2))); b3.setClickable(true);
+        b4.setTag(options.get(3)); b4.setText(displayNameMap.get(options.get(3))); b4.setClickable(true);
     }
 
     public void onOptionSelected(View view) {
@@ -186,16 +189,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private String getDisplayName(String key) {
-        switch (key) {
-            case "violin": return "Violín";
-            // añadir más mapeos según sea necesario
-            default:
-                // Capitalizar primera letra
-                return key.substring(0,1).toUpperCase() + key.substring(1);
-        }
-    }
-
     private String[] cargarInstrumentosDesdeAssets() {
         try {
             InputStream is = getAssets().open("instruments.json");
@@ -208,8 +201,13 @@ public class GameActivity extends AppCompatActivity {
             JSONObject root = new JSONObject(sb.toString());
             JSONArray arr = root.getJSONArray("instruments");
             String[] instruments = new String[arr.length()];
+            displayNameMap = new HashMap<>();
             for (int i = 0; i < arr.length(); i++) {
-                instruments[i] = arr.getJSONObject(i).getString("file");
+                JSONObject obj = arr.getJSONObject(i);
+                String file = obj.getString("file");
+                String name = obj.getString("name");
+                instruments[i] = file;
+                displayNameMap.put(file, name);
             }
             return instruments;
         } catch (IOException | JSONException e) {
