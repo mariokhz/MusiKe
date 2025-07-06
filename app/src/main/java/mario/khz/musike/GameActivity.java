@@ -125,7 +125,7 @@ public class GameActivity extends AppCompatActivity {
                 if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                     int pos = mediaPlayer.getCurrentPosition();
                     circleProgress.setProgress((float) pos / duration);
-                    progressHandler.postDelayed(this, 50);
+                    progressHandler.postDelayed(this, 10);
                 }
             }
         });
