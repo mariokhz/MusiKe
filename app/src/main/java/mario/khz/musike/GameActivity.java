@@ -47,6 +47,8 @@ public class GameActivity extends AppCompatActivity {
     private int correctCount = 0;
     private ColorStateList defaultBtnTint;
     private Map<String, String> displayNameMap;
+    private List<String> userAnswers = new ArrayList<>();
+    private List<String> correctAnswers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +89,12 @@ public class GameActivity extends AppCompatActivity {
 
     private void startRound() {
         if (roundCount >= MAX_ROUNDS) {
-            // Terminar juego
+            // Terminar juego: pasar listas de respuestas
             Intent intent = new Intent(this, FinishActivity.class);
             intent.putExtra("correctCount", correctCount);
             intent.putExtra("totalRounds", MAX_ROUNDS);
+            intent.putStringArrayListExtra("correctAnswers", new ArrayList<>(correctAnswers));
+            intent.putStringArrayListExtra("userAnswers", new ArrayList<>(userAnswers));
             startActivity(intent);
             finish();
             return;
@@ -98,6 +102,8 @@ public class GameActivity extends AppCompatActivity {
         roundCount++;
         // Preparar instrumento y audio de la lista pre-generada
         correctInstrument = roundInstruments[roundCount - 1];
+        // Guardar instrumento correcto para tabla
+        correctAnswers.add(displayNameMap.get(correctInstrument));
         int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
         if (mediaPlayer != null) mediaPlayer.release();
         mediaPlayer = MediaPlayer.create(this, recurso);
@@ -161,7 +167,10 @@ public class GameActivity extends AppCompatActivity {
     public void onOptionSelected(View view) {
         // Deshabilitar más clics en esta ronda
         disableOptionButtons();
+        // Registrar respuesta del usuario para la tabla
         String key = (String) view.getTag();
+        userAnswers.add(displayNameMap.get(key));
+        // Luego comprobamos acierto/ fallo
         MaterialButton btn = (MaterialButton) view;
         if (key.equals(correctInstrument)) {
             correctCount++;

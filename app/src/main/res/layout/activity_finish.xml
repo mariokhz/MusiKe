@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Jugar de nuevo"
-        app:layout_constraintTop_toBottomOf="@id/scoreGrid"
+        app:layout_constraintTop_toBottomOf="@id/answersTable"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="32dp" />
@@ -65,5 +65,15 @@
 
     </GridLayout>
 
+    <TableLayout
+        android:id="@+id/answersTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/scoreGrid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <!-- Filas de respuestas correctas/incorrectas se agregarán dinámicamente -->
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
