@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MusiKe</string>
+    <string name="result_text">Has acertado %1$d de %2$d rondas</string>
 </resources>

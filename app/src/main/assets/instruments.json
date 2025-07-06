@@ -1,14 +1,24 @@
 {
   "instruments": [
-    {"name": "flauta", "file": "flauta"},
-    {"name": "fagot", "file": "fagot"},
-    {"name": "clarinete", "file": "clarinete"},
-    {"name": "contrabajo", "file": "contrabajo"},
-    {"name": "cello", "file": "cello"},
-    {"name": "oboe", "file": "oboe"},
-    {"name": "violin", "file": "violin"},
-    {"name": "viola", "file": "viola"},
-    {"name": "piano", "file": "piano"},
-    {"name": "arpa", "file": "arpa"}
+    {"name": "Flauta", "file": "flauta"},
+    {"name": "Fagot", "file": "fagot"},
+    {"name": "Clarinete", "file": "clarinete"},
+    {"name": "Contrabajo", "file": "contrabajo"},
+    {"name": "Cello", "file": "cello"},
+    {"name": "Oboe", "file": "oboe"},
+    {"name": "Violín", "file": "violin"},
+    {"name": "Viola", "file": "viola"},
+    {"name": "Piano", "file": "piano"},
+    {"name": "Arpa", "file": "arpa"},
+    {"name": "Caja", "file": "caja"},
+    {"name": "Campanólogo", "file": "campanologo"},
+    {"name": "Marimba", "file": "marimba"},
+    {"name": "Pequeña percusión", "file": "pequena_percusion"},
+    {"name": "Platos de choque", "file": "platos_de_choque"},
+    {"name": "Trombón", "file": "trombon"},
+    {"name": "Trompa", "file": "trompa"},
+    {"name": "Trompeta", "file": "trompeta"},
+    {"name": "Tuba", "file": "tuba"},
+    {"name": "Vibráfono", "file": "vibrafono"}
   ]
 }

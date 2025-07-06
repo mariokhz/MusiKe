@@ -30,6 +30,7 @@ public class CircleProgressView extends View {
         fgPaint.setColor(0xFFFFFFFF);
         fgPaint.setStyle(Paint.Style.STROKE);
         fgPaint.setStrokeWidth(12f);
+        fgPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public void setProgress(float fraction) {
