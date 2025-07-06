@@ -11,7 +11,7 @@
     {"name": "Piano", "file": "piano", "family": "Cuerda"},
     {"name": "Arpa", "file": "arpa", "family": "Cuerda"},
     {"name": "Caja", "file": "caja", "family": "Percusión"},
-    {"name": "Campanólogo", "file": "campanologo", "family": "Percusión"},
+    {"name": "Campanas tubulares", "file": "campanologo", "family": "Percusión"},
     {"name": "Marimba", "file": "marimba", "family": "Percusión"},
     {"name": "Pequeña percusión", "file": "pequena_percusion", "family": "Percusión"},
     {"name": "Platos de choque", "file": "platos_de_choque", "family": "Percusión"},
