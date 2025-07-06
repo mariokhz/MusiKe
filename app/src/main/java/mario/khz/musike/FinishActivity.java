@@ -5,10 +5,16 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.content.res.ColorStateList;
 import android.widget.TextView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.util.TypedValue;
+import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
 
 public class FinishActivity extends AppCompatActivity {
 
@@ -31,6 +37,36 @@ public class FinishActivity extends AppCompatActivity {
         int wrongCount = totalRounds - correctCount;
         btnWrong.setText(String.valueOf(wrongCount));
         btnWrong.setTextColor(Color.parseColor("#F44336"));
+
+        // Llenar tabla de respuestas
+        TableLayout table = findViewById(R.id.answersTable);
+        ArrayList<String> correctAnswers = getIntent().getStringArrayListExtra("correctAnswers");
+        ArrayList<String> userAnswers = getIntent().getStringArrayListExtra("userAnswers");
+        if (correctAnswers != null && userAnswers != null) {
+            for (int i = 0; i < correctAnswers.size(); i++) {
+                String correct = correctAnswers.get(i);
+                String user = userAnswers.get(i);
+                TableRow row = new TableRow(this);
+                row.setGravity(Gravity.CENTER_HORIZONTAL);
+                TableRow.LayoutParams lp = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                );
+                lp.setMargins(8, 8, 8, 8);
+                row.setLayoutParams(lp);
+
+                TextView tvAnswer = new TextView(this);
+                tvAnswer.setGravity(Gravity.CENTER);
+                tvAnswer.setText(correct);
+                tvAnswer.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+                tvAnswer.setTextColor(correct.equals(user)
+                        ? Color.parseColor("#4CAF50")
+                        : Color.parseColor("#F44336"));
+                row.addView(tvAnswer);
+
+                table.addView(row);
+            }
+        }
 
         MaterialButton btnRestart = findViewById(R.id.btnRestart);
         btnRestart.setOnClickListener(v -> {
