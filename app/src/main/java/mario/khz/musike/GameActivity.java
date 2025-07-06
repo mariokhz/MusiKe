@@ -50,6 +50,7 @@ public class GameActivity extends AppCompatActivity {
     private int correctCount = 0;
     private ColorStateList defaultBtnTint;
     private Map<String, String> displayNameMap;
+    private Map<String, String> familyMap;
     private List<String> userAnswers = new ArrayList<>();
     private List<String> correctAnswers = new ArrayList<>();
     private TextView roundNumberText;
@@ -152,20 +153,64 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    private String[] cargarInstrumentosDesdeAssets() {
+        try {
+            InputStream is = getAssets().open("instruments.json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line);
+            br.close();
+
+            JSONObject root = new JSONObject(sb.toString());
+            JSONArray arr = root.getJSONArray("instruments");
+            String[] instruments = new String[arr.length()];
+            displayNameMap = new HashMap<>();
+            familyMap = new HashMap<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String file = obj.getString("file");
+                String name = obj.getString("name");
+                String family = obj.getString("family");
+                instruments[i] = file;
+                displayNameMap.put(file, name);
+                familyMap.put(file, family);
+            }
+            return instruments;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void setupOptions() {
         // Preparamos los botones para la ronda
         resetOptionButtons();
         disableOptionButtons();
         // Construir lista de opciones: una correcta y tres incorrectas
         List<String> wrong = new ArrayList<>();
+        // Solo opciones de la misma familia
+        String family = familyMap.get(correctInstrument);
         for (String ins : instrumentos) {
-            if (!ins.equals(correctInstrument)) wrong.add(ins);
+            if (!ins.equals(correctInstrument) && familyMap.get(ins).equals(family)) {
+                wrong.add(ins);
+            }
         }
         Collections.shuffle(wrong);
         List<String> options = new ArrayList<>();
         options.add(correctInstrument);
-        for (int i = 0; i < 3 && i < wrong.size(); i++) {
+        int needed = Math.min(3, wrong.size());
+        for (int i = 0; i < needed; i++) {
             options.add(wrong.get(i));
+        }
+        // Si no hay suficientes de la misma familia, completar con otros
+        if (options.size() < 4) {
+            for (String ins : instrumentos) {
+                if (!options.contains(ins)) {
+                    options.add(ins);
+                    if (options.size() == 4) break;
+                }
+            }
         }
         Collections.shuffle(options);
         // Asignar a botones con clave en tag y texto amigable
@@ -235,33 +280,6 @@ public class GameActivity extends AppCompatActivity {
             b.setBackgroundTintList(defaultBtnTint);
             // Mantener texto y tint, solo desactivar clics
             b.setClickable(false);
-        }
-    }
-
-    private String[] cargarInstrumentosDesdeAssets() {
-        try {
-            InputStream is = getAssets().open("instruments.json");
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) sb.append(line);
-            br.close();
-
-            JSONObject root = new JSONObject(sb.toString());
-            JSONArray arr = root.getJSONArray("instruments");
-            String[] instruments = new String[arr.length()];
-            displayNameMap = new HashMap<>();
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                String file = obj.getString("file");
-                String name = obj.getString("name");
-                instruments[i] = file;
-                displayNameMap.put(file, name);
-            }
-            return instruments;
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
