@@ -70,4 +70,12 @@ public class StudyActivity extends AppCompatActivity {
             return new String[0];
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (adapter != null) {
+            adapter.stopPlayback();
+        }
+    }
 }

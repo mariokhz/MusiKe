@@ -17,6 +17,7 @@ public class StudyGridAdapter {
     private Context context;
     private String[] instrumentos;
     private Map<String, String> displayNameMap;
+    private MediaPlayer mediaPlayer;
 
     public StudyGridAdapter(Context context, String[] instrumentos, Map<String, String> displayNameMap) {
         this.context = context;
@@ -45,13 +46,13 @@ public class StudyGridAdapter {
 
             // Crear botón con el ícono del instrumento
             ImageButton btn = new ImageButton(context);
-            // set fixed square button size (80dp) for 1:1 ratio and smaller icons
+            // establecer tamaño fijo cuadrado del botón (80dp) para mantener proporción 1:1 y usar iconos más pequeños
             int buttonSizePx = (int) (context.getResources().getDisplayMetrics().density * 80 + 0.5f);
             LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(buttonSizePx, buttonSizePx);
             btnParams.gravity = Gravity.CENTER;
             btn.setLayoutParams(btnParams);
             btn.setBackgroundResource(R.drawable.button_selector);
-            // set button background color to light blue
+            // establecer color de fondo del botón a azul claro
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D681B0")));
             btn.setImageResource(drawableRes);
             btn.setAdjustViewBounds(true);
@@ -59,8 +60,12 @@ public class StudyGridAdapter {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MediaPlayer mp = MediaPlayer.create(context, rawRes);
-                    mp.start();
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    }
+                    mediaPlayer = MediaPlayer.create(context, rawRes);
+                    mediaPlayer.start();
                 }
             });
 
@@ -74,6 +79,14 @@ public class StudyGridAdapter {
             cell.addView(btn);
             cell.addView(label);
             grid.addView(cell);
+        }
+    }
+
+    public void stopPlayback() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 }
