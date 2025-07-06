@@ -53,7 +53,7 @@ public class StudyGridAdapter {
             btn.setLayoutParams(btnParams);
             btn.setBackgroundResource(R.drawable.button_selector);
             // establecer color de fondo del botón a azul claro
-            btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D681B0")));
+            // btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D681B0")));
             btn.setImageResource(drawableRes);
             btn.setAdjustViewBounds(true);
             btn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
