@@ -1,6 +1,7 @@
 package mario.khz.musike;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.view.Gravity;
@@ -44,8 +45,14 @@ public class StudyGridAdapter {
 
             // Crear botón con el ícono del instrumento
             ImageButton btn = new ImageButton(context);
-            btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            // set fixed square button size (80dp) for 1:1 ratio and smaller icons
+            int buttonSizePx = (int) (context.getResources().getDisplayMetrics().density * 80 + 0.5f);
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(buttonSizePx, buttonSizePx);
+            btnParams.gravity = Gravity.CENTER;
+            btn.setLayoutParams(btnParams);
             btn.setBackgroundResource(R.drawable.button_selector);
+            // set button background color to light blue
+            btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D681B0")));
             btn.setImageResource(drawableRes);
             btn.setAdjustViewBounds(true);
             btn.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
