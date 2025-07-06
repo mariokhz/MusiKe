@@ -70,7 +70,7 @@ public class FinishActivity extends AppCompatActivity {
 
         MaterialButton btnRestart = findViewById(R.id.btnRestart);
         btnRestart.setOnClickListener(v -> {
-            Intent intent = new Intent(FinishActivity.this, GameActivity.class);
+            Intent intent = new Intent(FinishActivity.this, RoundSelectionActivity.class);
             startActivity(intent);
             finish();
         });

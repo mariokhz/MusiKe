@@ -9,6 +9,8 @@ import android.widget.Toast;
 import android.graphics.Color;
 import android.content.res.ColorStateList;
 import android.content.Intent;
+import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +38,8 @@ import com.google.android.material.button.MaterialButton;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final int MAX_ROUNDS = 10;
+    public static final String EXTRA_MAX_ROUNDS = "maxRounds";
+    private int totalRounds;
     private MediaPlayer mediaPlayer;
     private CircleProgressView circleProgress;
     private Handler progressHandler = new Handler();
@@ -47,17 +50,25 @@ public class GameActivity extends AppCompatActivity {
     private int correctCount = 0;
     private ColorStateList defaultBtnTint;
     private Map<String, String> displayNameMap;
+    private Map<String, String> familyMap;
     private List<String> userAnswers = new ArrayList<>();
     private List<String> correctAnswers = new ArrayList<>();
+    private TextView roundNumberText;
+    private ImageView instrumentIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_game);
+        // Obtener número de rondas de selección o usar 10 por defecto
+        totalRounds = getIntent().getIntExtra(EXTRA_MAX_ROUNDS, 10);
 
         // Inicializar CircleProgressView
         circleProgress = findViewById(R.id.circleProgress);
+        // Inicializar TextView de número de ronda
+        roundNumberText = findViewById(R.id.roundNumberText);
+        instrumentIcon = findViewById(R.id.instrumentIcon);
         // Guardar tint original de botones
         defaultBtnTint = ((MaterialButton) findViewById(R.id.option1)).getBackgroundTintList();
 
@@ -81,18 +92,18 @@ public class GameActivity extends AppCompatActivity {
     private void generarOrdenRondas() {
         List<String> list = new ArrayList<>(Arrays.asList(instrumentos));
         Collections.shuffle(list, new Random(System.currentTimeMillis()));
-        roundInstruments = new String[MAX_ROUNDS];
-        for (int i = 0; i < MAX_ROUNDS && i < list.size(); i++) {
+        roundInstruments = new String[totalRounds];
+        for (int i = 0; i < totalRounds && i < list.size(); i++) {
             roundInstruments[i] = list.get(i);
         }
     }
 
     private void startRound() {
-        if (roundCount >= MAX_ROUNDS) {
+        if (roundCount >= totalRounds) {
             // Terminar juego: pasar listas de respuestas
             Intent intent = new Intent(this, FinishActivity.class);
             intent.putExtra("correctCount", correctCount);
-            intent.putExtra("totalRounds", MAX_ROUNDS);
+            intent.putExtra("totalRounds", totalRounds);
             intent.putStringArrayListExtra("correctAnswers", new ArrayList<>(correctAnswers));
             intent.putStringArrayListExtra("userAnswers", new ArrayList<>(userAnswers));
             startActivity(intent);
@@ -102,6 +113,11 @@ public class GameActivity extends AppCompatActivity {
         roundCount++;
         // Preparar instrumento y audio de la lista pre-generada
         correctInstrument = roundInstruments[roundCount - 1];
+        // Actualizar número de ronda en UI
+        roundNumberText.setText(String.valueOf(roundCount));
+        // Actualizar icono de instrumento en círculo
+        int iconRes = getResources().getIdentifier(correctInstrument, "drawable", getPackageName());
+        instrumentIcon.setImageResource(iconRes);
         // Guardar instrumento correcto para tabla
         correctAnswers.add(displayNameMap.get(correctInstrument));
         int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
@@ -137,20 +153,64 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    private String[] cargarInstrumentosDesdeAssets() {
+        try {
+            InputStream is = getAssets().open("instruments.json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line);
+            br.close();
+
+            JSONObject root = new JSONObject(sb.toString());
+            JSONArray arr = root.getJSONArray("instruments");
+            String[] instruments = new String[arr.length()];
+            displayNameMap = new HashMap<>();
+            familyMap = new HashMap<>();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String file = obj.getString("file");
+                String name = obj.getString("name");
+                String family = obj.getString("family");
+                instruments[i] = file;
+                displayNameMap.put(file, name);
+                familyMap.put(file, family);
+            }
+            return instruments;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void setupOptions() {
         // Preparamos los botones para la ronda
         resetOptionButtons();
         disableOptionButtons();
         // Construir lista de opciones: una correcta y tres incorrectas
         List<String> wrong = new ArrayList<>();
+        // Solo opciones de la misma familia
+        String family = familyMap.get(correctInstrument);
         for (String ins : instrumentos) {
-            if (!ins.equals(correctInstrument)) wrong.add(ins);
+            if (!ins.equals(correctInstrument) && familyMap.get(ins).equals(family)) {
+                wrong.add(ins);
+            }
         }
         Collections.shuffle(wrong);
         List<String> options = new ArrayList<>();
         options.add(correctInstrument);
-        for (int i = 0; i < 3 && i < wrong.size(); i++) {
+        int needed = Math.min(3, wrong.size());
+        for (int i = 0; i < needed; i++) {
             options.add(wrong.get(i));
+        }
+        // Si no hay suficientes de la misma familia, completar con otros
+        if (options.size() < 4) {
+            for (String ins : instrumentos) {
+                if (!options.contains(ins)) {
+                    options.add(ins);
+                    if (options.size() == 4) break;
+                }
+            }
         }
         Collections.shuffle(options);
         // Asignar a botones con clave en tag y texto amigable
@@ -220,33 +280,6 @@ public class GameActivity extends AppCompatActivity {
             b.setBackgroundTintList(defaultBtnTint);
             // Mantener texto y tint, solo desactivar clics
             b.setClickable(false);
-        }
-    }
-
-    private String[] cargarInstrumentosDesdeAssets() {
-        try {
-            InputStream is = getAssets().open("instruments.json");
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) sb.append(line);
-            br.close();
-
-            JSONObject root = new JSONObject(sb.toString());
-            JSONArray arr = root.getJSONArray("instruments");
-            String[] instruments = new String[arr.length()];
-            displayNameMap = new HashMap<>();
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                String file = obj.getString("file");
-                String name = obj.getString("name");
-                instruments[i] = file;
-                displayNameMap.put(file, name);
-            }
-            return instruments;
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
