@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.graphics.Color;
 import android.content.res.ColorStateList;
+import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,11 +33,15 @@ import com.google.android.material.button.MaterialButton;
 
 public class GameActivity extends AppCompatActivity {
 
+    private static final int MAX_ROUNDS = 10;
     private MediaPlayer mediaPlayer;
     private CircleProgressView circleProgress;
     private Handler progressHandler = new Handler();
     private String correctInstrument;
     private String[] instrumentos;
+    private int roundCount = 0;
+    private int correctCount = 0;
+    private ColorStateList defaultBtnTint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,8 @@ public class GameActivity extends AppCompatActivity {
 
         // Inicializar CircleProgressView
         circleProgress = findViewById(R.id.circleProgress);
+        // Guardar tint original de botones
+        defaultBtnTint = ((MaterialButton) findViewById(R.id.option1)).getBackgroundTintList();
 
         // Ajustar insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -56,19 +63,39 @@ public class GameActivity extends AppCompatActivity {
 
         // Cargar y reproducir un instrumento aleatorio y preparar opciones
         instrumentos = cargarInstrumentosDesdeAssets();
-        if (instrumentos != null && instrumentos.length > 0) {
-            correctInstrument = seleccionarInstrumentoAleatorio(instrumentos);
-            int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
-            mediaPlayer = MediaPlayer.create(this, recurso);
-            if (mediaPlayer != null) {
-                mediaPlayer.setLooping(false);
-                mediaPlayer.start();
-                // Iniciar actualización de progreso
-                startProgressUpdater();
-                // Mostrar opciones de respuesta
-                setupOptions();
-            }
+        startRound();
+    }
+
+    private void startRound() {
+        if (roundCount >= MAX_ROUNDS) {
+            // Terminar juego
+            Intent intent = new Intent(this, FinishActivity.class);
+            intent.putExtra("correctCount", correctCount);
+            intent.putExtra("totalRounds", MAX_ROUNDS);
+            startActivity(intent);
+            finish();
+            return;
         }
+        roundCount++;
+        // Preparar instrumento y audio
+        correctInstrument = seleccionarInstrumentoAleatorio(instrumentos);
+        int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
+        if (mediaPlayer != null) mediaPlayer.release();
+        mediaPlayer = MediaPlayer.create(this, recurso);
+        mediaPlayer.setLooping(false);
+        // Avanzar de ronda cuando termine el audio
+        mediaPlayer.setOnCompletionListener(mp -> onAudioComplete());
+        mediaPlayer.start();
+        startProgressUpdater();
+        setupOptions();
+    }
+
+    private void onAudioComplete() {
+        // Similar a onOptionSelected sin feedback
+        progressHandler.removeCallbacksAndMessages(null);
+        resetOptionButtons();
+        circleProgress.setProgress(0f);
+        startRound();
     }
 
     private void startProgressUpdater() {
@@ -86,6 +113,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setupOptions() {
+        // Preparamos los botones para la ronda
+        resetOptionButtons();
+        disableOptionButtons();
         // Construir lista de opciones: una correcta y tres incorrectas
         List<String> wrong = new ArrayList<>();
         for (String ins : instrumentos) {
@@ -103,26 +133,57 @@ public class GameActivity extends AppCompatActivity {
         Button b2 = findViewById(R.id.option2);
         Button b3 = findViewById(R.id.option3);
         Button b4 = findViewById(R.id.option4);
-        b1.setTag(options.get(0)); b1.setText(getDisplayName(options.get(0)));
-        b2.setTag(options.get(1)); b2.setText(getDisplayName(options.get(1)));
-        b3.setTag(options.get(2)); b3.setText(getDisplayName(options.get(2)));
-        b4.setTag(options.get(3)); b4.setText(getDisplayName(options.get(3)));
+        b1.setTag(options.get(0)); b1.setText(getDisplayName(options.get(0))); b1.setClickable(true);
+        b2.setTag(options.get(1)); b2.setText(getDisplayName(options.get(1))); b2.setClickable(true);
+        b3.setTag(options.get(2)); b3.setText(getDisplayName(options.get(2))); b3.setClickable(true);
+        b4.setTag(options.get(3)); b4.setText(getDisplayName(options.get(3))); b4.setClickable(true);
     }
 
     public void onOptionSelected(View view) {
+        // Deshabilitar más clics en esta ronda
+        disableOptionButtons();
         String key = (String) view.getTag();
         MaterialButton btn = (MaterialButton) view;
         if (key.equals(correctInstrument)) {
+            correctCount++;
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
             Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show();
         } else {
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
             Toast.makeText(this, "Incorrecto", Toast.LENGTH_SHORT).show();
         }
-        // Opcional: detener audio o pasar a siguiente ronda
+        // Detener audio y progress
         if (mediaPlayer != null && mediaPlayer.isPlaying()) mediaPlayer.stop();
-        // Detener actualización de progreso
         progressHandler.removeCallbacksAndMessages(null);
+        // Esperar un segundo y pasar a siguiente ronda
+        progressHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Reset botones y preparar siguiente ronda
+                resetOptionButtons();
+                disableOptionButtons();
+                circleProgress.setProgress(0f);
+                startRound();
+            }
+        }, 1000);
+    }
+
+    private void disableOptionButtons() {
+        int[] ids = {R.id.option1, R.id.option2, R.id.option3, R.id.option4};
+        for (int id : ids) {
+            MaterialButton b = findViewById(id);
+            b.setClickable(false);
+        }
+    }
+
+    private void resetOptionButtons() {
+        int[] ids = {R.id.option1, R.id.option2, R.id.option3, R.id.option4};
+        for (int id : ids) {
+            MaterialButton b = findViewById(id);
+            b.setBackgroundTintList(defaultBtnTint);
+            // Mantener texto y tint, solo desactivar clics
+            b.setClickable(false);
+        }
     }
 
     private String getDisplayName(String key) {
