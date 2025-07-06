@@ -49,6 +49,7 @@
             android:layout_height="90dp"
             android:layout_margin="8dp"
             app:backgroundTint="@color/white"
+            android:textSize="24sp"
             android:background="@drawable/button_selector"
             android:text="1" />
 
@@ -58,6 +59,7 @@
             android:layout_height="90dp"
             android:layout_margin="8dp"
             app:backgroundTint="@color/white"
+            android:textSize="24sp"
             android:background="@drawable/button_selector"
             android:text="2" />
 
