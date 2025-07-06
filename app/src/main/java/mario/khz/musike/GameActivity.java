@@ -169,6 +169,15 @@ public class GameActivity extends AppCompatActivity {
             Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show();
         } else {
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
+            // Mostrar cuál era la opción correcta
+            int[] ids = {R.id.option1, R.id.option2, R.id.option3, R.id.option4};
+            for (int id : ids) {
+                MaterialButton b = findViewById(id);
+                if (correctInstrument.equals(b.getTag())) {
+                    b.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+                    break;
+                }
+            }
             Toast.makeText(this, "Incorrecto", Toast.LENGTH_SHORT).show();
         }
         // Detener audio y progress
