@@ -1,7 +1,9 @@
 package mario.khz.musike;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.content.res.ColorStateList;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,15 @@ public class FinishActivity extends AppCompatActivity {
 
         TextView tvResult = findViewById(R.id.tvResult);
         tvResult.setText(getString(R.string.result_text, correctCount, totalRounds));
+
+        // Mostrar aciertos en button1 y errores en button2
+        MaterialButton btnCorrect = findViewById(R.id.button1);
+        btnCorrect.setText(String.valueOf(correctCount));
+        btnCorrect.setTextColor(Color.parseColor("#4CAF50"));
+        MaterialButton btnWrong = findViewById(R.id.button2);
+        int wrongCount = totalRounds - correctCount;
+        btnWrong.setText(String.valueOf(wrongCount));
+        btnWrong.setTextColor(Color.parseColor("#F44336"));
 
         MaterialButton btnRestart = findViewById(R.id.btnRestart);
         btnRestart.setOnClickListener(v -> {

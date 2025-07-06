@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Arrays;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -41,6 +42,7 @@ public class GameActivity extends AppCompatActivity {
     private Handler progressHandler = new Handler();
     private String correctInstrument;
     private String[] instrumentos;
+    private String[] roundInstruments;
     private int roundCount = 0;
     private int correctCount = 0;
     private ColorStateList defaultBtnTint;
@@ -66,7 +68,21 @@ public class GameActivity extends AppCompatActivity {
 
         // Cargar y reproducir un instrumento aleatorio y preparar opciones
         instrumentos = cargarInstrumentosDesdeAssets();
+        // Generar orden de instrumentos para cada ronda sin repeticiones
+        generarOrdenRondas();
         startRound();
+    }
+
+    /**
+     * Mezcla la lista de instrumentos y toma los primeros MAX_ROUNDS para asegurar sin repeticiones.
+     */
+    private void generarOrdenRondas() {
+        List<String> list = new ArrayList<>(Arrays.asList(instrumentos));
+        Collections.shuffle(list, new Random(System.currentTimeMillis()));
+        roundInstruments = new String[MAX_ROUNDS];
+        for (int i = 0; i < MAX_ROUNDS && i < list.size(); i++) {
+            roundInstruments[i] = list.get(i);
+        }
     }
 
     private void startRound() {
@@ -80,8 +96,8 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
         roundCount++;
-        // Preparar instrumento y audio
-        correctInstrument = seleccionarInstrumentoAleatorio(instrumentos);
+        // Preparar instrumento y audio de la lista pre-generada
+        correctInstrument = roundInstruments[roundCount - 1];
         int recurso = getResources().getIdentifier(correctInstrument, "raw", getPackageName());
         if (mediaPlayer != null) mediaPlayer.release();
         mediaPlayer = MediaPlayer.create(this, recurso);
