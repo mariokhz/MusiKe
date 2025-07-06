@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.util.TypedValue;
+import android.view.Gravity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -46,6 +47,7 @@ public class FinishActivity extends AppCompatActivity {
                 String correct = correctAnswers.get(i);
                 String user = userAnswers.get(i);
                 TableRow row = new TableRow(this);
+                row.setGravity(Gravity.CENTER_HORIZONTAL);
                 TableRow.LayoutParams lp = new TableRow.LayoutParams(
                         TableRow.LayoutParams.WRAP_CONTENT,
                         TableRow.LayoutParams.WRAP_CONTENT
@@ -54,6 +56,7 @@ public class FinishActivity extends AppCompatActivity {
                 row.setLayoutParams(lp);
 
                 TextView tvAnswer = new TextView(this);
+                tvAnswer.setGravity(Gravity.CENTER);
                 tvAnswer.setText(correct);
                 tvAnswer.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                 tvAnswer.setTextColor(correct.equals(user)

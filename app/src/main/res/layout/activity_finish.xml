@@ -67,6 +67,8 @@
 
     <TableLayout
         android:id="@+id/answersTable"
+        android:background="@drawable/rounded_table_bg"
+        android:layout_margin="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
